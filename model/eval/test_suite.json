@@ -1,0 +1,29 @@
+{
+  "description": "OhMyWord hand-curated test suite. Each case has a context and acceptable next words. Used to evaluate all models consistently across Steps 3-8.",
+  "cases": [
+    {"id": "es_01", "type": "spanish",       "context": "mañana voy a ir al",               "acceptable": ["trabajo", "gym", "mercado"]},
+    {"id": "es_02", "type": "spanish",       "context": "me gusta el ceviche con",           "acceptable": ["limón", "ají", "mariscos"]},
+    {"id": "es_03", "type": "spanish",       "context": "nos vemos en el",                   "acceptable": ["parque", "trabajo", "aeropuerto"]},
+    {"id": "es_04", "type": "spanish",       "context": "no puedo creer que",                "acceptable": ["esto", "eso", "hayas"]},
+    {"id": "es_05", "type": "spanish",       "context": "te llamo más",                      "acceptable": ["tarde", "temprano", "luego"]},
+    {"id": "es_06", "type": "spanish",       "context": "ya casi llego al",                  "acceptable": ["trabajo", "hotel", "aeropuerto"]},
+    {"id": "es_07", "type": "spanish",       "context": "se me olvidó el",                   "acceptable": ["teléfono", "cargador", "pasaporte"]},
+    {"id": "en_01", "type": "english",       "context": "I need to send that",               "acceptable": ["email", "message", "report"]},
+    {"id": "en_02", "type": "english",       "context": "let me know if you",                "acceptable": ["can", "want", "need"]},
+    {"id": "en_03", "type": "english",       "context": "are you coming to the",             "acceptable": ["meeting", "party", "office"]},
+    {"id": "en_04", "type": "english",       "context": "I'll be there in",                  "acceptable": ["minutes", "seconds", "a"]},
+    {"id": "en_05", "type": "english",       "context": "don't forget to",                   "acceptable": ["bring", "send", "check"]},
+    {"id": "cs_01", "type": "codeswitching", "context": "oye I need to send that email para","acceptable": ["mañana", "hoy", "el"]},
+    {"id": "cs_02", "type": "codeswitching", "context": "el meeting de mañana lo",           "acceptable": ["cancelaron", "movieron", "confirmo"]},
+    {"id": "cs_03", "type": "codeswitching", "context": "el jefe me dijo que el deadline es","acceptable": ["hoy", "mañana", "viernes"]},
+    {"id": "cs_04", "type": "codeswitching", "context": "let me know si puedes",             "acceptable": ["venir", "ir", "mañana"]},
+    {"id": "cs_05", "type": "codeswitching", "context": "ya mandé el PR para",               "acceptable": ["revisión", "review", "aprobación"]},
+    {"id": "cs_06", "type": "codeswitching", "context": "te mando el link del",              "acceptable": ["repo", "doc", "meet"]},
+    {"id": "sl_01", "type": "slang",         "context": "no manches qué",                    "acceptable": ["rollo", "onda", "locura"]},
+    {"id": "sl_02", "type": "slang",         "context": "qué onda con el",                   "acceptable": ["trabajo", "rollo", "plan"]},
+    {"id": "sl_03", "type": "slang",         "context": "no mames ese partido estuvo",       "acceptable": ["increíble", "brutal", "buenísimo"]},
+    {"id": "cv_01", "type": "conversational","context": "mañana playa vamos por unas chelas y comemos algo se me antoja comida marina me gustaría comer un rico", "acceptable": ["ceviche", "cevichito", "pescado"]},
+    {"id": "cv_02", "type": "conversational","context": "terrible el tráfico tardé dos horas llegué agotado lo único que quiero es", "acceptable": ["dormir", "descansar", "sentarme"]},
+    {"id": "cv_03", "type": "conversational","context": "llevamos tres sprints sin deploy el repo está lleno de bugs el team está quemado hay que hablar con", "acceptable": ["product", "el", "alguien"]}
+  ]
+}

@@ -10,7 +10,6 @@ Usage:
 
 import json
 import random
-import re
 from pathlib import Path
 
 from datasets import load_dataset
@@ -28,7 +27,6 @@ SAMPLE_SIZES    = {
 }
 SPLIT_RATIOS    = {"train": 0.90, "val": 0.05, "test": 0.05}
 OUTPUT_DIR      = Path("model/data/processed")
-MIAMI_DIR       = Path("model/data/raw/miami")
 SEED            = 42
 
 # ── Download ───────────────────────────────────────────────────────────────────
@@ -37,7 +35,7 @@ def load_wikipedia(lang: str, n: int) -> list[str]:
     print(f"  Downloading Wikipedia ({lang})...")
     ds = load_dataset(
         "wikimedia/wikipedia", f"20231101.{lang}",
-        split="train", streaming=True, trust_remote_code=True,
+        split="train", streaming=True,
     )
     sentences = []
     for article in ds:
@@ -52,35 +50,18 @@ def load_wikipedia(lang: str, n: int) -> list[str]:
 
 def load_opus(n: int) -> list[str]:
     print("  Downloading OPUS-100 (es-en)...")
+    # non-streaming with slice avoids fsspec bad file descriptor bug
     ds = load_dataset(
         "Helsinki-NLP/opus-100", "en-es",
-        split="train", streaming=True,
+        split=f"train[:{n // 2}]",  # each item yields 2 sentences (es + en)
     )
     sentences = []
     for item in ds:
         sentences.append(item["translation"]["es"])
         sentences.append(item["translation"]["en"])
-        if len(sentences) >= n:
-            return sentences[:n]
     return sentences
 
 
-def load_miami_corpus() -> list[str]:
-    """Loads .cha transcription files from the Miami corpus if present."""
-    if not MIAMI_DIR.exists():
-        return []
-    print(f"  Loading Miami Corpus from {MIAMI_DIR}...")
-    sentences = []
-    for cha_file in MIAMI_DIR.glob("*.cha"):
-        for line in cha_file.read_text(encoding="utf-8", errors="ignore").splitlines():
-            # .cha format: utterance lines start with *SPE: or similar speaker codes
-            if line.startswith("*"):
-                text = re.sub(r"^\*\w+:\s*", "", line)
-                text = re.sub(r"\[.*?\]|\d+_\d+|[<>]", "", text).strip()
-                if 5 < len(text) < 300:
-                    sentences.append(text)
-    print(f"    → {len(sentences)} utterances loaded")
-    return sentences
 
 # ── Clean ──────────────────────────────────────────────────────────────────────
 
@@ -144,9 +125,6 @@ def main() -> None:
     texts += load_wikipedia("en", SAMPLE_SIZES["wiki_en"])
     texts += load_opus(SAMPLE_SIZES["opus"])
 
-    miami = load_miami_corpus()
-    # Miami corpus is small but high-value (real Spanglish) — repeat 5x in the mix
-    texts += miami * 5
 
     print(f"\n[2/4] Cleaning... ({len(texts)} raw sentences)")
     texts = clean(texts)
@@ -159,6 +137,13 @@ def main() -> None:
     print(f"  → {len(examples)} training windows ({CONTEXT_WINDOW} tokens each)")
 
     print("\n[4/4] Splitting and saving...")
+    # raw text — consumed by the n-gram baseline (Step 3)
+    raw_path = OUTPUT_DIR / "raw_text.txt"
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    raw_path.write_text("\n".join(texts))
+    print(f"  raw text → {raw_path} ({len(texts):,} sentences)")
+
+    # tokenized windows — consumed by the neural model (Step 4+)
     n       = len(examples)
     n_train = int(n * SPLIT_RATIOS["train"])
     n_val   = int(n * SPLIT_RATIOS["val"])
